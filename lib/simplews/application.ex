@@ -10,6 +10,7 @@ defmodule SimpleWS.Application do
     children = [
       # Starts a worker by calling: Simplews.Worker.start_link(arg)
       # {Simplews.Worker, arg}
+      SimpleWS.Telemetry,
       {Bandit, plug: SimpleWS.Socket.Plug}
     ]
 
