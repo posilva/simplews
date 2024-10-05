@@ -1,18 +1,6 @@
-defmodule Simplews do
+defmodule SimpleWS do
   @moduledoc """
-  Documentation for `Simplews`.
+  Documentation for `SimpleWS`.
   """
-
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> Simplews.hello()
-      :world
-
-  """
-  def hello do
-    :world
-  end
+  require Logger
 end
