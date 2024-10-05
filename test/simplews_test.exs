@@ -18,6 +18,8 @@ defmodule SimplewsTest do
   end
 
   defp connect(host \\ "localhost", port \\ 4_000) do
+    port = System.get_env("TEST_PORT", Integer.to_string(port))
+    {port, _} = Integer.parse(port)
     {:ok, conn} = Mint.HTTP.connect(:http, host, port)
     {:ok, conn, ref} = Mint.WebSocket.upgrade(:ws, conn, "/server", [])
     http_reply_message = receive(do: (message -> message))
