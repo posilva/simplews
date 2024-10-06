@@ -7,7 +7,12 @@ defmodule SimpleWS.MixProject do
       version: "0.1.0",
       elixir: "~> 1.17",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      releases: [
+        simplews_release: [
+          applications: [opentelemetry_exporter: :permanent, opentelemetry: :temporary]
+        ]
+      ]
     ]
   end
 
@@ -29,8 +34,10 @@ defmodule SimpleWS.MixProject do
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.1"},
       {:telemetry, "~> 1.0"},
-      {:opentelemetry_bandit, "~> 0.1.4"},
-      {:opentelemetry, "== 1.4.0"}
+      {:opentelemetry_exporter, "~> 1.7.0"},
+      {:opentelemetry_api, "~> 1.3.1"},
+      {:opentelemetry, "== 1.4.0"},
+      {:opentelemetry_bandit, "~> 0.1.4"}
 
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
