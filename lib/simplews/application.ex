@@ -11,12 +11,20 @@ defmodule SimpleWS.Application do
       # Starts a worker by calling: Simplews.Worker.start_link(arg)
       # {Simplews.Worker, arg}
       SimpleWS.Telemetry,
-      {Bandit, plug: SimpleWS.Socket.Plug}
+      {Bandit, plug: SimpleWS.Socket.Plug, port: get_port()}
     ]
+
+    OpentelemetryBandit.setup()
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: SimpleWS.Supervisor]
     Supervisor.start_link(children, opts)
+  end
+
+  defp get_port do
+    port = System.get_env("SWS_PORT") || "4000"
+    {port, _} = Integer.parse(port)
+    port
   end
 end
