@@ -8,9 +8,10 @@ defmodule SimpleWS.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      # Starts a worker by calling: Simplews.Worker.start_link(arg)
-      # {Simplews.Worker, arg}
+      # Starts a worker by calling: SimpleWS.Worker.start_link(arg)
+      # {SimpleWS.Worker, arg}
       SimpleWS.Telemetry,
+      {DynamicSupervisor, name: SimpleWS.Bot.Supervisor, strategy: :one_for_one},
       {Bandit, plug: SimpleWS.Socket.Plug, port: get_port()}
     ]
 

@@ -1,4 +1,4 @@
-# Simplews
+# SimpleWS
 
 - [x] Add Docker support
 - [x] Add telemetry reporter

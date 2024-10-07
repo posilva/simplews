@@ -1,4 +1,4 @@
-defmodule Simplews.Socket.Handler do
+defmodule SimpleWS.Socket.Handler do
   @behaviour WebSock
   require Logger
 

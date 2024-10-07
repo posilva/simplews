@@ -1,4 +1,4 @@
-defmodule SimplewsTest do
+defmodule SimpleWSTest do
   use ExUnit.Case
 
   test "simple connect" do

@@ -27,7 +27,7 @@ defmodule SimpleWS.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:mint_web_socket, "~> 1.0", only: [:test]},
+      {:mint_web_socket, "~> 1.0"},
       {:bandit, "~> 1.0"},
       {:websock_adapter, "~> 0.5.7"},
       {:websock, "~> 0.5"},
@@ -37,7 +37,8 @@ defmodule SimpleWS.MixProject do
       {:opentelemetry_exporter, "~> 1.7.0"},
       {:opentelemetry_api, "~> 1.3.1"},
       {:opentelemetry, "== 1.4.0"},
-      {:opentelemetry_bandit, "~> 0.1.4"}
+      {:opentelemetry_bandit, "~> 0.1.4"},
+      {:fresh, "~> 0.4.4"}
 
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
