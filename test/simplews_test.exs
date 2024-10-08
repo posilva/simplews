@@ -1,6 +1,10 @@
 defmodule SimpleWSTest do
   use ExUnit.Case
 
+  alias SimpleWS.Proto
+
+  require Logger
+
   test "simple connect" do
     connect()
   end
@@ -14,6 +18,19 @@ defmodule SimpleWSTest do
     echo_message = receive(do: (message -> message))
     {:ok, _conn, [{:data, ^ref, data}]} = Mint.WebSocket.stream(conn, echo_message)
     {:ok, _websocket, [{:text, response}]} = Mint.WebSocket.decode(websocket, data)
+    assert(msg == response)
+  end
+
+  test "simple proto exchange" do
+    {:ok, conn, websocket, ref} = connect()
+
+    {:ok, msg} = Proto.Echo.encode(%Proto.Echo{message: "hello world"})
+    msg = IO.iodata_to_binary(msg)
+    {:ok, websocket, data} = Mint.WebSocket.encode(websocket, {:binary, msg})
+    {:ok, conn} = Mint.WebSocket.stream_request_body(conn, ref, data)
+    echo_message = receive(do: (message -> message))
+    {:ok, _conn, [{:data, ^ref, data}]} = Mint.WebSocket.stream(conn, echo_message)
+    {:ok, _websocket, [{:binary, response}]} = Mint.WebSocket.decode(websocket, data)
     assert(msg == response)
   end
 

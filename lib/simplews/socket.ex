@@ -14,6 +14,11 @@ defmodule SimpleWS.Socket do
   end
 
   @impl WebSock
+  def handle_in({data, [opcode: :binary]}, state) do
+    {:reply, :ok, {:binary, data}, state}
+  end
+
+  @impl WebSock
   def handle_in({text, [opcode: :text]}, state) do
     {:reply, :ok, {:text, text}, state}
   end

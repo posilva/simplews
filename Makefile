@@ -25,3 +25,7 @@ compose-build:
 
 docker-build-force:
 	docker build --progress=plain --no-cache  -t simplews:latest --platform=linux/arm64 .
+
+.PHONY: proto
+proto: 
+	mix protox.generate --output-path=./lib/simplews/proto/messages.ex --include-path=./proto ./proto/messages.proto

@@ -1,0 +1,67 @@
+syntax = "proto3";
+package  simpleWS.proto;
+
+message Echo {
+  string message = 1;
+}
+
+message Envelope {
+  string message_id = 1;
+  int64 timestamp = 2;
+  uint64 counter = 3;
+
+  enum ContentType {
+    UNKNOWN = 0;
+    REQUEST = 1;
+    RESPONSE = 2;
+    ERROR = 3;
+  }
+
+  ContentType type = 4;
+
+  oneof payload {
+  
+    Request request = 5;
+    Response response = 6;
+    Error error = 7;
+  }
+}
+
+message Request {
+  oneof payload {
+    Echo echo = 1;
+    LoginRequest login = 2;
+  }
+}
+
+message Response {
+  string request_id = 1;
+  oneof payload {
+    Echo echo = 2;
+    LoginResponse login = 3;
+  }
+}
+
+message Error {
+  string request_id = 1; 
+  string code = 2;
+  string message = 3;
+}
+
+
+enum LoginProvider {
+  UNKNOWN = 0;
+  GOOGLE = 1;
+  APPLE = 2;
+  CUSTOM = 3;
+}
+
+message LoginRequest {
+  LoginProvider provider = 1;
+  map<string, string> credentials = 2;
+}
+
+message LoginResponse {
+  LoginProvider provider = 1;
+  map<string, string> tokens = 2;
+}
