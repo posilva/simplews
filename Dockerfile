@@ -22,6 +22,7 @@ RUN mix local.hex --force && \
 RUN mix do deps.get, deps.compile  
 RUN mix do compile, release
 
+RUN ls -lrt /app/_build/prod/rel/
 ### Runtime application
 FROM alpine:3.19 AS app
 
@@ -32,13 +33,13 @@ RUN apk add --update --no-cache bash openssl ncurses-libs libstdc++
 COPY --from=builder /app/_build/prod/rel/simplews ./ 
 
 RUN chown nobody:nobody /app
-
 ENV HOME=/app 
 
 USER nobody
 
 
 EXPOSE 4000 
+EXPOSE 9568
 
 CMD ["bin/simplews", "start"]
 

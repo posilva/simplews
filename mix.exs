@@ -9,7 +9,7 @@ defmodule SimpleWS.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       releases: [
-        simplews_release: [
+        simplews: [
           applications: [opentelemetry_exporter: :permanent, opentelemetry: :temporary]
         ]
       ]
@@ -38,6 +38,7 @@ defmodule SimpleWS.MixProject do
       {:opentelemetry_api, "~> 1.3.1"},
       {:opentelemetry, "== 1.4.0"},
       {:opentelemetry_bandit, "~> 0.1.4"},
+      {:telemetry_metrics_prometheus, "~> 1.1.0"},
       {:fresh, "~> 0.4.4"}
 
       # {:dep_from_hexpm, "~> 0.3.0"},

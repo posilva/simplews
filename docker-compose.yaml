@@ -1,4 +1,12 @@
 services:
+  simplews:
+    build:
+      context: .
+      args:
+        - SWS_PORT=${SWS_PORT:-4000}
+    ports:
+      - "4000:4000"
+      - "4090:9568"
   otel-collector:
     image: otel/opentelemetry-collector-contrib:latest
     command: ["--config=/etc/otel-collector-config.yaml"]
@@ -26,3 +34,14 @@ services:
       - ./etc/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=grafana
+    volumes:
+      - ./etc/grafana:/etc/grafana/provisioning/datasources

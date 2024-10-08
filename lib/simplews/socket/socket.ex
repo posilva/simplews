@@ -8,13 +8,13 @@ defmodule SimpleWS.Socket do
       client_ip: c_ip
     }
 
+    SimpleWS.Telemetry.connection_inc()
     Logger.info("init state: #{inspect(state)}")
     {:ok, state}
   end
 
   @impl WebSock
   def handle_in({text, [opcode: :text]}, state) do
-    Logger.info("handle_in: #{inspect(text)}")
     {:reply, :ok, {:text, text}, state}
   end
 
@@ -26,6 +26,7 @@ defmodule SimpleWS.Socket do
 
   @impl WebSock
   def terminate(reason, state) do
+    SimpleWS.Telemetry.connection_dec()
     Logger.info("terminate: #{inspect(reason)}")
 
     {:stop, reason, state}

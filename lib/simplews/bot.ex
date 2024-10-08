@@ -11,7 +11,7 @@ defmodule SimpleWS.Bot do
   @impl GenServer
   def init(args) do
     Process.flag(:trap_exit, true)
-
+    Process.send_after(self(), :disconnect, Enum.random(10_000..50_000))
     Logger.info("bot init args #{inspect(args)}")
 
     state = %{
@@ -39,5 +39,16 @@ defmodule SimpleWS.Bot do
       )
 
     {:noreply, %{state | client: client}}
+  end
+
+  @impl GenServer
+  def handle_info(:disconnect, state) do
+    Logger.info("bot is disconnecting")
+    Process.send(state.client, :stop, [])
+    {:noreply, state}
+  end
+
+  def handle_info(_, state) do
+    {:noreply, state}
   end
 end
