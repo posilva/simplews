@@ -11,6 +11,8 @@ defmodule SimpleWS.Application do
       # Starts a worker by calling: SimpleWS.Worker.start_link(arg)
       # {SimpleWS.Worker, arg}
       SimpleWS.Telemetry,
+      {Phoenix.PubSub, name: SimpleWS.Cluster.PubSub},
+      SimpleWS.Cluster.Presence,
       {DynamicSupervisor, name: SimpleWS.Bot.Supervisor, strategy: :one_for_one},
       {Bandit, plug: SimpleWS.Socket.Plug, port: get_port()}
     ]

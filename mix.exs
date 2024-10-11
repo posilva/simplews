@@ -40,6 +40,8 @@ defmodule SimpleWS.MixProject do
       {:opentelemetry_bandit, "~> 0.1.4"},
       {:telemetry_metrics_prometheus, "~> 1.1.0"},
       {:protox, "~> 1.7"},
+      {:phoenix_pubsub, "~> 2.1"},
+      {:phoenix, "~> 1.7", optional: true},
       # for protobuf decode/encode 
       {:jason, "~> 1.2"},
       {:fresh, "~> 0.4.4"}

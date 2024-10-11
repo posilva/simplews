@@ -3,7 +3,7 @@
 - [x] Add Docker support
 - [x] Add telemetry reporter
 - [x] Add support for Protobuf parsing
-- [ ] Add presence support
-- [ ] Add loadtester
+- [x] Add presence support
+- [x] Add loadtester
 - [ ] Add rate limiter
 - [ ] Add github actions
