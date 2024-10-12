@@ -18,21 +18,33 @@ defmodule SimpleWS.Socket do
   end
 
   @impl WebSock
-  def handle_in({data, [opcode: :binary]}, state) do
+  def handle_in(frame, state) do
+    rlID = "ip::#{state[:client_ip]}"
+
+    case SimpleWS.RateLimiter.allow(rlID) do
+      :ok ->
+        handle_in2(frame, state)
+
+      :limit ->
+        {:close, 1013, :rate_limited, state}
+    end
+  end
+
+  def handle_in2({data, [opcode: :binary]}, state) do
     {:reply, :ok, {:binary, data}, state}
   end
 
-  def handle_in({<<"join::", uid::binary>>, [opcode: :text]}, state) do
+  def handle_in2({<<"join::", uid::binary>>, [opcode: :text]}, state) do
     send(self(), {:after_join, uid})
     {:ok, state}
   end
 
-  def handle_in({<<"list::">>, [opcode: :text]}, state) do
+  def handle_in2({<<"list::">>, [opcode: :text]}, state) do
     send(self(), :report)
     {:ok, state}
   end
 
-  def handle_in({data, [opcode: :text]}, state) do
+  def handle_in2({data, [opcode: :text]}, state) do
     {:reply, :ok, {:text, data}, state}
   end
 

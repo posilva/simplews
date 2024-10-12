@@ -5,5 +5,5 @@
 - [x] Add support for Protobuf parsing
 - [x] Add presence support
 - [x] Add loadtester
-- [ ] Add rate limiter
+- [x] Add rate limiter
 - [ ] Add github actions
