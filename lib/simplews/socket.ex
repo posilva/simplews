@@ -8,43 +8,56 @@ defmodule SimpleWS.Socket do
   def init(%{client_ip: c_ip}) do
     state = %{
       client_ip: c_ip,
-      key: nil
+      key: nil,
+      rate_limited_timer: nil
     }
 
-    SimpleWS.Telemetry.connection_inc()
+    SimpleWS.Telemetry.Metrics.active_connections_increment()
     Logger.info("init state: #{inspect(state)}")
 
     {:ok, state}
   end
 
+
+  def maybe_cancel_rate_limit(%{rate_limited_timer: rlref}=state) when not is_nil(rlref) do
+    :timer.cancel(rlref)
+    %{state | rate_limited_timer: nil}
+  end
+  def maybe_cancel_rate_limit(state), do: state
+
   @impl WebSock
   def handle_in(frame, state) do
     rlID = "ip::#{state[:client_ip]}"
-
     case SimpleWS.RateLimiter.allow(rlID) do
       :ok ->
-        handle_in2(frame, state)
+        state = maybe_cancel_rate_limit(state)
+
+        handle_frame(frame, state)
 
       :limit ->
-        {:close, 1013, :rate_limited, state}
+        SimpleWS.Telemetry.Metrics.rate_limited()
+        # throtle for random time
+        timer_ref = Process.send_after(self(), :rate_limited, 3000)
+        {:ok, %{state| rate_limited_timer: timer_ref}}
+        #{:stop, :normal, 1013, state}
     end
   end
 
-  def handle_in2({data, [opcode: :binary]}, state) do
+  def handle_frame({data, [opcode: :binary]}, state) do
     {:reply, :ok, {:binary, data}, state}
   end
 
-  def handle_in2({<<"join::", uid::binary>>, [opcode: :text]}, state) do
+  def handle_frame({<<"join::", uid::binary>>, [opcode: :text]}, state) do
     send(self(), {:after_join, uid})
     {:ok, state}
   end
 
-  def handle_in2({<<"list::">>, [opcode: :text]}, state) do
+  def handle_frame({<<"list::">>, [opcode: :text]}, state) do
     send(self(), :report)
     {:ok, state}
   end
 
-  def handle_in2({data, [opcode: :text]}, state) do
+  def handle_frame({data, [opcode: :text]}, state) do
     {:reply, :ok, {:text, data}, state}
   end
 
@@ -74,6 +87,9 @@ defmodule SimpleWS.Socket do
 
     {:ok, %{state | key: uid_key}}
   end
+  def handle_info(:rate_limited, state) do
+    {:stop, :normal, 1013, state}
+  end
 
   def handle_info(msg, state) do
     Logger.info("handle_info: #{inspect(msg)}")
@@ -82,8 +98,7 @@ defmodule SimpleWS.Socket do
 
   @impl WebSock
   def terminate(reason, state) do
-    SimpleWS.Telemetry.connection_dec()
-    Logger.info("terminate: #{inspect(reason)}")
+    SimpleWS.Telemetry.Metrics.active_connections_decrement()
     SimpleWS.Cluster.Presence.untrack(self(), @presence_topic, state[:key])
     {:stop, reason, state}
   end

@@ -22,7 +22,18 @@ defmodule SimpleWS.Bot.Client do
     {:reply, {:close, 1002, "simplews"}, state}
   end
 
-  def handle_disconnect(_code, _reason, _state) do
+  def handle_disconnect(code, reason, _state) do
+    Logger.info("handle disconnect #{inspect(code)} #{inspect(reason)}")
     :close
+  end
+
+  def handle_error({error, reason}, state) do
+    Logger.info("handling error and ignoring  #{inspect({error, reason})}")
+    {:ignore, state}
+  end
+
+  def handle_error(error, _state) do
+    Logger.info("handling error and reconnecting #{error}")
+    :reconnect
   end
 end
