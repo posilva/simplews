@@ -1,4 +1,7 @@
-.PHONY: test compose-logs compose-restartd compose-restart-forced compose-restart-force compose-restart compose-up compose-upd compose-down docker-build compose-build docker-build-force
+.PHONY: cover test compose-logs compose-restartd compose-restart-forced compose-restart-force compose-restart compose-up compose-upd compose-down docker-build compose-build docker-build-force
+
+cover: test 
+	mix coveralls.html
 
 test: 
 	mix test 

@@ -8,6 +8,14 @@ defmodule SimpleWS.MixProject do
       elixir: "~> 1.17",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test,
+        "coveralls.cobertura": :test
+      ],
       releases: [
         simplews: [
           applications: [opentelemetry_exporter: :permanent, opentelemetry: :temporary]
@@ -45,6 +53,7 @@ defmodule SimpleWS.MixProject do
       {:hammer, "~> 6.2"},
       {:fresh, "~> 0.4"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:excoveralls, "~> 0.18", only: :test},
       {:jason, "~> 1.4"}
     ]
   end
