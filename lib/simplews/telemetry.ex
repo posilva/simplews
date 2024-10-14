@@ -1,5 +1,10 @@
 defmodule SimpleWS.Telemetry do
+  @moduledoc """
+    Module to handle telemetry under the supervision tree.
+  """
   use Supervisor
+
+  alias SimpleWS.Telemetry.Metrics
 
   def start_link(arg) do
     Supervisor.start_link(__MODULE__, arg, name: __MODULE__)
@@ -18,10 +23,10 @@ defmodule SimpleWS.Telemetry do
     children = [
       # Telemetry poller will execute the given period measurements
       # every 10_000ms. Learn more here: https://hexdocs.pm/telemetry_metrics
-      {:telemetry_poller, measurements: SimpleWS.Telemetry.Metrics.periodic(), period: 5_000},
+      {:telemetry_poller, measurements: Metrics.periodic(), period: 5_000},
       # Add reporters as children of your supervision tree.
       # {Telemetry.Metrics.ConsoleReporter, metrics: metrics()}
-      {TelemetryMetricsPrometheus, [metrics: SimpleWS.Telemetry.Metrics.report()]}
+      {TelemetryMetricsPrometheus, [metrics: Metrics.report()]}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

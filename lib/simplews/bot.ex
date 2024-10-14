@@ -1,4 +1,10 @@
 defmodule SimpleWS.Bot do
+  @moduledoc """
+    Bot module responsible for managing the lifecycle of a 
+    bot connected to the websocket
+  """
+  alias SimpleWS.Bot.{Client, Supervisor}
+
   use GenServer
 
   require Logger
@@ -26,13 +32,13 @@ defmodule SimpleWS.Bot do
   end
 
   def new(n \\ 1) when is_integer(n) and n > 0 do
-    Enum.map(1..n, fn _ -> SimpleWS.Bot.Supervisor.start_child(nil) end)
+    Enum.map(1..n, fn _ -> Supervisor.start_child(nil) end)
   end
 
   @impl GenServer
   def handle_continue(:connect, state) do
     {:ok, client} =
-      SimpleWS.Bot.Client.start_link(
+      Client.start_link(
         uri: state[:uri],
         state: state[:state] || %{},
         opts: state[:opts] || []

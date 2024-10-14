@@ -1,4 +1,7 @@
 defmodule SimpleWS.Socket.Plug do
+  @moduledoc """
+    Plug implementation to handle WebRequests upgrades and expose a route
+  """
   use Plug.Router
 
   require Logger

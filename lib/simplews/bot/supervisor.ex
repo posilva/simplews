@@ -1,4 +1,7 @@
 defmodule SimpleWS.Bot.Supervisor do
+  @moduledoc """
+    Dynamic Supervisor to spawn bots
+  """
   use DynamicSupervisor
 
   def start_link(args) do

@@ -1,4 +1,7 @@
 defmodule SimpleWS.Bot.Client do
+  @moduledoc """
+    Websocket client implemented using Fresh
+  """
   use Fresh
 
   require Logger

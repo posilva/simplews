@@ -1,5 +1,13 @@
 defmodule SimpleWS.Socket do
+  @moduledoc """
+    WebSock implementation to handle with WebSocket lifecycle
+  """
   require Logger
+
+  alias SimpleWS.Cluster.Presence
+  alias SimpleWS.RateLimiter
+  alias SimpleWS.Telemetry.Metrics
+
   @behaviour WebSock
 
   @presence_topic "presence_state"
@@ -12,34 +20,35 @@ defmodule SimpleWS.Socket do
       rate_limited_timer: nil
     }
 
-    SimpleWS.Telemetry.Metrics.active_connections_increment()
+    Metrics.active_connections_increment()
     Logger.info("init state: #{inspect(state)}")
 
     {:ok, state}
   end
 
-
-  def maybe_cancel_rate_limit(%{rate_limited_timer: rlref}=state) when not is_nil(rlref) do
+  def maybe_cancel_rate_limit(%{rate_limited_timer: rlref} = state) when not is_nil(rlref) do
     :timer.cancel(rlref)
     %{state | rate_limited_timer: nil}
   end
+
   def maybe_cancel_rate_limit(state), do: state
 
   @impl WebSock
   def handle_in(frame, state) do
-    rlID = "ip::#{state[:client_ip]}"
-    case SimpleWS.RateLimiter.allow(rlID) do
+    rl_id = "ip::#{state[:client_ip]}"
+
+    case RateLimiter.allow(rl_id) do
       :ok ->
         state = maybe_cancel_rate_limit(state)
 
         handle_frame(frame, state)
 
       :limit ->
-        SimpleWS.Telemetry.Metrics.rate_limited()
+        Metrics.rate_limited()
         # throtle for random time
         timer_ref = Process.send_after(self(), :rate_limited, 3000)
-        {:ok, %{state| rate_limited_timer: timer_ref}}
-        #{:stop, :normal, 1013, state}
+        {:ok, %{state | rate_limited_timer: timer_ref}}
+        # {:stop, :normal, 1013, state}
     end
   end
 
@@ -63,11 +72,9 @@ defmodule SimpleWS.Socket do
 
   @impl WebSock
   def handle_info(:report, state) do
-    Logger.info(
-      " Users Presence List: #{inspect(SimpleWS.Cluster.Presence.list(@presence_topic))}"
-    )
+    Logger.info(" Users Presence List: #{inspect(Presence.list(@presence_topic))}")
 
-    list = SimpleWS.Cluster.Presence.list(@presence_topic)
+    list = Presence.list(@presence_topic)
     {:reply, :ok, {:text, Jason.encode!(list)}, state}
   end
 
@@ -76,7 +83,7 @@ defmodule SimpleWS.Socket do
     uid_key = "user:#{uid}"
 
     {:ok, _} =
-      SimpleWS.Cluster.Presence.track(
+      Presence.track(
         self(),
         @presence_topic,
         uid_key,
@@ -87,6 +94,7 @@ defmodule SimpleWS.Socket do
 
     {:ok, %{state | key: uid_key}}
   end
+
   def handle_info(:rate_limited, state) do
     {:stop, :normal, 1013, state}
   end
@@ -98,8 +106,8 @@ defmodule SimpleWS.Socket do
 
   @impl WebSock
   def terminate(reason, state) do
-    SimpleWS.Telemetry.Metrics.active_connections_decrement()
-    SimpleWS.Cluster.Presence.untrack(self(), @presence_topic, state[:key])
+    Metrics.active_connections_decrement()
+    Presence.untrack(self(), @presence_topic, state[:key])
     {:stop, reason, state}
   end
 end

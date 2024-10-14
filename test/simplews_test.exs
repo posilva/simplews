@@ -46,7 +46,7 @@ defmodule SimpleWSTest do
     assert(Map.has_key?(presence_list, "user:1"))
     assert(Kernel.map_size(presence_list) == 1)
 
-    # second client 
+    # second client
     {:ok, conn, websocket, ref} = connect()
 
     msg2 = "join::2"
@@ -63,10 +63,10 @@ defmodule SimpleWSTest do
   test "simple text disconnect test presence" do
     {:ok, conn, websocket, ref} = connect()
     {:ok, _socket, _response} = join({conn, websocket, ref}, "1")
-    # second client 
+    # second client
     {:ok, conn2, websocket2, ref2} = connect()
     {:ok, _socket2, _response2} = join({conn2, websocket2, ref2}, "2")
-    # third client 
+    # third client
     {:ok, conn3, websocket3, ref3} = connect()
     {:ok, _socket3, _response3} = join({conn3, websocket3, ref3}, "3")
     Mint.HTTP.close(conn2)
