@@ -44,6 +44,7 @@ defmodule SimpleWS.MixProject do
       {:phoenix, "~> 1.7", optional: true},
       {:hammer, "~> 6.2"},
       {:fresh, "~> 0.4"},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:jason, "~> 1.4"}
     ]
   end
