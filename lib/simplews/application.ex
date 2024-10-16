@@ -7,7 +7,10 @@ defmodule SimpleWS.Application do
 
   @impl true
   def start(_type, _args) do
+    topologies = Application.get_env(:simplews, :topologies)
+
     children = [
+      {Cluster.Supervisor, [topologies, [name: SimpleWS.ClusterSupervisor]]},
       # Starts a worker by calling: SimpleWS.Worker.start_link(arg)
       # {SimpleWS.Worker, arg}
       SimpleWS.Telemetry,

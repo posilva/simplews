@@ -22,3 +22,10 @@ config :hammer,
       cleanup_interval_ms: 60_000 * 10
     ]
   }
+
+config :simplews,
+  topologies: [
+    default: [
+      strategy: Cluster.Strategy.Gossip
+    ]
+  ]

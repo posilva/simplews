@@ -57,6 +57,7 @@ defmodule SimpleWS.MixProject do
       {:excoveralls, "~> 0.18", only: :test},
       {:ex_doc, ">= 0.0.0", only: :docs},
       {:recon, "~> 2.5"},
+      {:libcluster, "~> 3.4"},
       {:jason, "~> 1.4"}
     ]
   end

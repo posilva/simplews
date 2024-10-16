@@ -4,9 +4,21 @@ services:
       context: .
       args:
         - SWS_PORT=${SWS_PORT:-4000}
+    environment:
+      ERLANG_COOKIE: "12345"
     ports:
       - "4000:4000"
       - "4090:9568"
+  simplews02:
+    build:
+      context: .
+      args:
+        - SWS_PORT=${SWS_PORT:-4001}
+    environment:
+      ERLANG_COOKIE: "12345"
+    ports:
+      - "4001:4000"
+      - "4091:9568"
   otel-collector:
     image: otel/opentelemetry-collector-contrib:latest
     command: ["--config=/etc/otel-collector-config.yaml"]
