@@ -1,10 +1,12 @@
 syntax = "proto3";
 package  simpleWS.proto;
 
+// SImple message for testing purposes
 message Echo {
   string message = 1;
 }
 
+// Wrapper message for all the messages exchange
 message Envelope {
   string message_id = 1;
   int64 timestamp = 2;
@@ -14,7 +16,8 @@ message Envelope {
     UNKNOWN = 0;
     REQUEST = 1;
     RESPONSE = 2;
-    ERROR = 3;
+    UPDATE = 3;
+    ERROR = 4;
   }
 
   ContentType type = 4;
@@ -41,6 +44,13 @@ message Response {
     LoginResponse login = 3;
   }
 }
+
+message Update{
+  oneof payload {
+    Echo echo = 1;
+  }
+}
+
 
 message Error {
   string request_id = 1; 

@@ -1,4 +1,5 @@
 defmodule SimpleWS.MixProject do
+  @moduledoc false
   use Mix.Project
 
   def project do
@@ -27,7 +28,7 @@ defmodule SimpleWS.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger],
+      extra_applications: [:logger, :recon],
       mod: {SimpleWS.Application, []}
     ]
   end
@@ -54,6 +55,8 @@ defmodule SimpleWS.MixProject do
       {:fresh, "~> 0.4"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.18", only: :test},
+      {:ex_doc, ">= 0.0.0", only: :docs},
+      {:recon, "~> 2.5"},
       {:jason, "~> 1.4"}
     ]
   end
